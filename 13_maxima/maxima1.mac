@@ -1,0 +1,53 @@
+/* AoC Day13 Part1 */
+solve(s) := block(
+    n: length(s),
+    m: slength(s[1]),
+    res: 0,
+    for i: 1 thru n - 1 do (
+        ok: true,
+        for k: 0 thru min(i - 1, n - i - 1) do (
+            if not sequal(s[i - k], s[i + 1 + k]) then (
+                ok: false
+            )
+        ),
+        if ok then (
+            res: res + i * 100
+        )
+    ),
+    for j: 1 thru m - 1 do (
+        ok: true,
+        for k: 0 thru min(j - 1, m - j - 1) do (
+            for i: 1 thru n do (
+                if not cequal(charat(s[i], j - k), charat(s[i], j + 1 + k)) then (
+                    ok: false
+                )
+            )
+        ),
+        if ok then (
+            res: res + j
+        )
+    ),
+    res
+);
+
+ans: 0;
+s: [];
+f: openr("data/in.txt");
+eof: false;
+
+while not eof do (
+    l: readline(f),
+    if l = false or l = "" then (
+        ans: ans + solve(reverse(s)),
+        if l = false then (
+            eof: true
+        ),
+        s: []
+    ) else (
+        s: cons(l, s)
+    )
+);
+
+g: openw("data/out1.txt");
+printf(g, "~d~%", ans);
+close(g);
