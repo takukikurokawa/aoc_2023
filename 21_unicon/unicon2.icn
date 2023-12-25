@@ -1,0 +1,69 @@
+# AoC Day21 Part2
+procedure main()
+    s := []
+    while l := read(&input) do {
+        put(s, l)
+    }
+    n := *s
+    m := *s[1]
+    d := []
+    every i := 1 to 3 * n do {
+        r := []
+        every j := 1 to 3 * m do {
+            put(r, -1)
+        }
+        put(d, r)
+    }
+    sx := -1
+    sy := -1
+    every i := 1 to n do {
+        every j := 1 to m do {
+            if s[i][j] === "S" then {
+                sx := i
+                sy := j
+                d[sx + n][sy + m] := 0
+            }
+        }
+    }
+    dx := [-1, 0, 1, 0]
+    dy := [0, 1, 0, -1]
+    queue := []
+    put(queue, [sx + n, sy + m])
+    while *queue > 0 do {
+        x := queue[1][1]
+        y := queue[1][2]
+        pop(queue)
+        every dir := 1 to 4 do {
+            nx := x + dx[dir]
+            ny := y + dy[dir]
+            if 1 <= nx & nx <= 3 * n & 1 <= ny & ny <= 3 * m & s[(nx - 1) % n + 1][(ny - 1) % m + 1] ~== "#" & d[nx][ny] == -1 then {
+                d[nx][ny] := d[x][y] + 1
+                put(queue, [nx, ny])
+            }
+        }
+    }
+    ans := 0
+    every i := 1 to 3 * n do {
+        every j := 1 to 3 * m do {
+            if d[i][j] ~= -1 then {
+                t := abs((i - 1) / n - 1) + abs((j - 1) / m - 1)
+                if t == 0 then {
+                    if d[i][j] % 2 == 1 then {
+                        ans := ans + 1
+                    }
+                } else {
+                    k := (26501365 - d[i][j]) / 131
+                    if k % 2 == d[i][j] % 2 then {
+                        k := k - 1
+                    }
+                    if t == 1 then {
+                        ans := ans + (k + 2) / 2
+                    } else {
+                        ans := ans + ((k + 3) / 2) * ((k + 2) / 2)
+                    }
+                }
+            }
+        }
+    }
+    write(ans)
+end
