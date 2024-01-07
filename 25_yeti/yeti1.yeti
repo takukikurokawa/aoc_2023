@@ -1,0 +1,54 @@
+// AoC Day25 Part1
+values a =
+    map (at a) (keys a);
+
+replaceNode removed node =
+    if (head (tail removed)) == node then
+        head removed
+    else
+        node
+    fi;
+
+contractEdge removed edge =
+    sort (map (replaceNode removed) edge);
+
+removeSelfLoop edges =
+    array (filter (_ x = (head x) != (head (tail x))) edges);
+
+contractEdges removed edges =
+    removeSelfLoop (map (contractEdge removed) edges);
+
+kargerMinCut vertices edges =
+   (n = length vertices;
+    m = length edges;
+    if n == 2 then
+        if m == 3 then
+            fold (*) 1 (values vertices)
+        else
+            0
+        fi
+    else
+        removed = edges[randomInt m];
+        vertices[head removed] := vertices[head removed] + vertices[head (tail removed)];
+        delete vertices (head (tail removed));
+        kargerMinCut vertices (contractEdges removed edges)
+    fi);
+
+edges = array [];
+vertices = [:];
+for (stdin.lines ()) do line:
+    words = strSplit ' ' (strReplace ':' '' line);
+    vertices[head words] := 1;
+    for (tail words) do node:
+        push edges (sort [(head words), node]);
+        vertices[node] := 1
+    done
+done;
+
+var ans = 0;
+
+ans == 0 loop (
+    ans := kargerMinCut (copy vertices) (copy edges);
+);
+
+println ans;
